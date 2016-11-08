@@ -151,17 +151,29 @@ function getPrimes(n) {
 
 }
 
+function clear(e) {
+  var target = e.target;
+  var div = target.closest(".item");
+  
+}
+
+function getTime() {
+  var time = new Date();
+  var h = time.getHours();
+  var m = time.getMinutes();
+  var s = time.getSeconds();
+
+  var parsedTime = h + ":" + m + ":" + s;
+
+  console.log(parsedTime);
+}
+
 // function start timer once button is clicked
 function startTimer(e) {
   // get element - target on which click event was called
   var target = e.target;
-  // get time in seconds (milliseconds/1000), ignore milliseconds
-  var before = new Date();
-  var after = new Date();
-
-
-
-  console.log(before.getSeconds());
+  // get time
+  setInterval("getTime()", 1000);
 }
 
 // function returns a randon number between 0 and 255 (256 in total)
