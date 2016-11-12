@@ -1,139 +1,45 @@
-//
-// var count=0;
-// var arra=[];
-//
-// 	function myprime(x){
-// 		var h = 0;
-// 			if (x==1){
-// 				return false;
-// 	 		}
-// 				for (var i = 1; i <= x; i++){
-// 					if (x%i==0){
-// 						h++;
-// 					}
-// 				}
-// 						if (h>2){
-// 							return false;
-// 						}
-// 							else{
-// 								return true;
-// 								}
-// 	}
-//
-// //var age= parseInt(prompt("yours number"));
-// 	function mynumber(age){
-// 		var age = prompt ("enter your age");
-// 			j=0;
-// 			for (var i=age; i <= 1000; i++){
-// 				j++;
-// 				if (myprime(i)==true) {
-// 					//arra[i]=i;
-// 					arra.push(i);
-// 					document.getElementById('chiffre'+count).innerHTML = i;
-// 					count++;
-// 					//document.write(arra[i]+"<br>");
-// 						if (count==7){
-// 							break;
-// 						}
-// 				}
-// 			}
-// 			console.log(arra);
-// 			return (arra);
-// 	}
-//
-//
-//
-//
-//
-// //var element = document.getElementsByClassName("para2")
-//
-// 	for(var i=0; i<7;i++){
-// 		var d = document.createElement('div');
-// 		d.className = "one";
-// 		document.body.appendChild(d);
-//
-// 		var btnOn = document.createElement('button')
-// 		btnOn.className = "bt";
-// 		btnOn.innerHTML = "On";
-// 		d.appendChild(btnOn);
-//
-// 		var btnOff = document.createElement('button')
-// 		btnOff.className = "bt";
-// 		btnOff.innerHTML = "Off";
-// 		d.appendChild(btnOff);
-//
-// 		var para = document.createElement('p')
-// 		para.className = "para";
-// 		d.appendChild(para);
-//
-//
-// 		var para2 = document.createElement('p')
-// 		para2.id = "chiffre"+i;
-// 		para2.className = "para2";
-// 		d.appendChild(para2);
-//
-//
-// }
-//
-//
-// function wr_hours(){
-// time=new Date();
-// time_sec=time.getSeconds();
-// time_min=time.getMinutes();
-// time_hours=time.getHours();
-// time_wr=((time_hours<10)?"0":"")+time_hours;
-// time_wr+=":";
-// time_wr+=((time_min<10)?"0":"")+time_min;
-// time_wr+=":";
-// time_wr+=((time_sec<10)?"0":"")+time_sec;
-// para.innerHTML=time_wr;
-// }
-// wr_hours();
-// setInterval("wr_hours();",1000);
-
-
-
-
-
-
-
-/*
-changeColor Random
-function changeColor() {
-var r = Math.floor(Math.random() * 256);
-var g = Math.floor(Math.random() * 256);
-var b = Math.floor(Math.random() * 256);
-var rgb = 'rgb(' + r + ',' + g + ',' + b + ')';
-document.body.style.backgroundColor = rgb
-}
-
-*/
-
-/***Define your variables at the top of file***/
+/***Define your global variables at the top of file***/
 
 // array of prime numbers
 var primes = [];
-// counter
+// counter for divs
 var COUNT = 7;
+// timer id
+var timerID;
 
+// returns true if number is a prime otherwise returns false
 function isPrime(n) {
+  // by default we consider number is not a prime
   var isPrime = false;
 
-  if (n <= 2) {
+  // if number is less than 2 or divisible by 2 it is not a prime
+  if (n <= 2 || n % 2 == 0) {
     isPrime = false;
+  // check if number is divisible by 3, 5 or 7 and is not 3, 5 or 7 itself
+  } else if ((n % 3 == 0) && (n != 3)) {
+    isPrime = false;
+  } else if ((n % 5 == 0) && (n != 5)) {
+    isPrime = false;
+  } else if ((n % 7 == 0) && (n != 7)) {
+    isPrime = false;
+  // otherwise we consider the number is prime
   } else {
-    if (n % 2 == 0 || n % 3 == 0 || n % 5 == 0 || n % 7 == 0) {
-      isPrime = false;
-    } else {
-      isPrime = true;
-    }
-    return isPrime;
+    isPrime = true;
   }
+
+  // return prime (true or false)
+  return isPrime;
 }
 
+/*
+* find 7 primes following age and push them to the array
+* get passed age as a parameter
+*/
 function getPrimes(n) {
-
+  // increment = n which is age
   var inc = n;
+  // empty array
+  primes = [];
 
   // loop 7 times
   for (var i = 0; i <= COUNT; i++) {
@@ -146,35 +52,138 @@ function getPrimes(n) {
     primes.push(inc);
   }
 
-  // once loop is done render 7 divs
+  // once loop is done render divs for found primes
   renderDiv();
-
 }
 
-function clear(e) {
-  var target = e.target;
-  var div = target.closest(".item");
-  
+// function render div element for each prime number and insert some child nodes (buttons, text nodes etc)
+function renderDiv() {
+  // get main container div
+  var container = document.getElementById("container");
+  // clear container inner HTML if need to re-render divs
+  container.innerHTML = "";
+
+  // create element for each prime
+  for(var i = 0; i < primes.length; i++) {
+    // create div which will hold other components
+    var div = document.createElement("div");
+    // div to display prime number
+    var prime = document.createElement("div");
+    // div to display current time
+    var timer = document.createElement("div");
+    // button On
+    var startBtn = document.createElement("button");
+    // button Off
+    var stopBtn = document.createElement("button");
+    // div to display time when color changes
+    var moduloTimeEl = document.createElement("div");
+
+    // set color for div
+    setColor(div);
+
+    //set class name for div
+    div.className = "item";
+    //set class name for prime div
+    prime.className = "prime";
+    //set class name for timer
+    timer.className = "timer";
+    // set class name for modulo div
+    moduloTimeEl.className = "modulo";
+
+    // set text for prime div
+    prime.textContent = primes[i];
+
+    // set text content for control buttons
+    startBtn.textContent = "On";
+    stopBtn.textContent = "Off";
+
+    // append event to On button
+    startBtn.addEventListener("click", handleTimer);
+    // append event to Off button
+    stopBtn.addEventListener("click", function() {
+      clearInterval(timerID);
+    });
+
+    // set class name for buttons
+    startBtn.className = "btn start";
+    stopBtn.className = "btn stop";
+    // append prime div to div
+    div.appendChild(prime);
+    // append timer to div
+    div.appendChild(timer);
+    // append modulo div to container div
+    div.appendChild(moduloTimeEl);
+    // append buttons to the div
+    div.appendChild(startBtn)
+    div.appendChild(stopBtn);
+    // finally append div to the container
+    container.appendChild(div);
+  }
 }
 
-function getTime() {
-  var time = new Date();
-  var h = time.getHours();
-  var m = time.getMinutes();
-  var s = time.getSeconds();
+// get time in format h:m:s
+function formatDate() {
+  // new date object representing current time
+  var now = new Date();
+  var h = now.getHours();
+  var m = now.getMinutes();
+  var s = now.getSeconds();
 
-  var parsedTime = h + ":" + m + ":" + s;
+  // prepend 0 if number is less than 10
+  h = h < 10 ? "0" + h : h;
+  m = m < 10 ? "0" + m : m;
+  s = s < 10 ? "0" + s : s;
 
-  console.log(parsedTime);
+  return h + ":" + m + ":" + s;
+}
+
+// get time
+function checkModulo(n) {
+  // new date object representing current time
+  var now = new Date();
+  var s = now.getSeconds();
+  var isModulo = true;
+
+  if (s % n == 0) {
+    isModulo = false;
+  }
+
+  return isModulo;
 }
 
 // function start timer once button is clicked
-function startTimer(e) {
+function handleTimer(e) {
+
   // get element - target on which click event was called
-  var target = e.target;
-  // get time
-  setInterval("getTime()", 1000);
+  var targetEl = e.target;
+  var divEl = targetEl.closest(".item");
+  var primeEl = divEl.getElementsByClassName("prime")[0];
+  var prime = primeEl.textContent;
+  var timerEl = divEl.getElementsByClassName("timer")[0];
+  var moduloTimeEl = divEl.getElementsByClassName("modulo")[0];
+
+  // function called within timer every 1s
+  var update = function() {
+    // get formatted current time
+    var now = formatDate();
+    // check if seconds in current time are divided by prime without modulo
+    var isModulo = checkModulo(prime);
+    //update timer div content
+    timerEl.textContent = now;
+    // if modulo is false display current time in modulo div
+    if (isModulo == false) {
+      setColor(divEl);
+      moduloTimeEl.textContent = now;
+    }
+  }
+
+  update();
+
+  // each time user clicks on Start button it creates new timer id which we can use to clear interval
+  timerID = window.setInterval(update, 1000);
+
 }
+
 
 // function returns a randon number between 0 and 255 (256 in total)
 function getRandom() {
@@ -201,55 +210,7 @@ function setColor(el) {
   el.style.backgroundColor = "rgb(" + color + ")";
 }
 
-function renderDiv() {
-  // get container div
-  var container = document.getElementById("container");
-  // clear container inner HTML if need to re-render divs
-  container.innerHTML = "";
-
-  for(var i = 0; i < primes.length; i++) {
-    // create div, Start and Stop buttons
-    var div = document.createElement("div");
-    var prime = document.createElement("div");
-    var timer = document.createElement("div");
-    var startBtn = document.createElement("button");
-    var stopBtn = document.createElement("button");
-
-
-    setColor(div);
-
-    //set class name for div
-    div.className = "item";
-    //set class name for prime div
-    prime.className = "prime";
-    //set class name for timer
-    timer.className = "timer";
-
-    // set text for prime div
-    prime.textContent = primes[i];
-
-    // set text content for control buttons
-    startBtn.textContent = "On";
-    stopBtn.textContent = "Off";
-
-    // append event to On button
-    startBtn.addEventListener("click", startTimer);
-
-
-    // set class name for buttons
-    startBtn.className = stopBtn.className = "btn";
-    // append prime div to div
-    div.appendChild(prime);
-    // append timer to div
-    div.appendChild(timer);
-    // append buttons to the div
-    div.appendChild(startBtn)
-    div.appendChild(stopBtn);
-    // append div to the container
-    container.appendChild(div);
-  }
-}
-
+// call functions after the DOM content is loaded
 document.addEventListener("DOMContentLoaded", function(e) {
   // button calling the prompt popup to get user's age
   var ageButton = document.getElementById("age");
