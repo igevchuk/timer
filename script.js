@@ -4,8 +4,8 @@
 var primes = [];
 // counter for divs
 var COUNT = 7;
-// timer id
-var timerID;
+// timer ids array (each time setInterval is called it returns a new id)
+var timers = [];
 
 // returns true if number is a prime otherwise returns false
 function isPrime(n) {
@@ -77,6 +77,8 @@ function renderDiv() {
     var stopBtn = document.createElement("button");
     // div to display time when color changes
     var moduloTimeEl = document.createElement("div");
+    // prime number
+    var currPrime = primes[i];
 
     // set color for div
     setColor(div);
@@ -91,18 +93,23 @@ function renderDiv() {
     moduloTimeEl.className = "modulo";
 
     // set text for prime div
-    prime.textContent = primes[i];
+    prime.textContent = currPrime;
 
     // set text content for control buttons
     startBtn.textContent = "On";
     stopBtn.textContent = "Off";
 
-    // append event to On button
-    startBtn.addEventListener("click", handleTimer);
-    // append event to Off button
-    stopBtn.addEventListener("click", function() {
-      clearInterval(timerID);
-    });
+    // append click event to On button
+    startBtn.onclick = startTimer;
+    /* append click event to Off button
+    * call function immediately to pass the current prime as a parameter
+    * otherwise currPrime will be equal to the last one
+    */
+    stopBtn.onclick = function(n) {
+      return function() {
+        clearInterval(timers[n]);
+      }
+    }(currPrime);
 
     // set class name for buttons
     startBtn.className = "btn start";
@@ -152,7 +159,7 @@ function checkModulo(n) {
 }
 
 // function start timer once button is clicked
-function handleTimer(e) {
+function startTimer(e) {
 
   // get element - target on which click event was called
   var targetEl = e.target;
@@ -179,8 +186,10 @@ function handleTimer(e) {
 
   update();
 
-  // each time user clicks on Start button it creates new timer id which we can use to clear interval
-  timerID = window.setInterval(update, 1000);
+  // each time setInterval is called it return a new id
+  var timerID = window.setInterval(update, 1000);
+  // push new timer id to the timer ids array using prime number as a key
+  timers[prime] = timerID;
 
 }
 
